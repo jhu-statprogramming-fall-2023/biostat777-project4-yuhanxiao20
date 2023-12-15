@@ -4,6 +4,10 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    source_code: embed
+    theme: 
+      version: 4
+      bootswatch: litera
 runtime: shiny
 ---
 
