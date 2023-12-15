@@ -311,6 +311,7 @@ pay_trend %>%
 
 ```{r warning = F, message = F, fig.dim = c(8,6)}
 pay_stem_trend %>% 
+  filter(state %in% c("california", "michigan", "maryland", "washington")) %>%
   ggplot(aes(x=stem_percent, y = early_career_pay, color = state)) +
   geom_point() +
   geom_smooth() + 
