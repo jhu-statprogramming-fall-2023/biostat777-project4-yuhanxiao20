@@ -93,7 +93,6 @@ Table {data-navmenu="Pay by State"}
 salary_st_avg <- salary_potential %>%
   select(name, state_name, early_career_pay) %>%
   rename(region = state_name) %>%
-  mutate(region = tolower(region)) %>%
   group_by(region) %>%
   summarise(
     avg_early_career_pay = as.integer(mean(early_career_pay))
@@ -104,8 +103,9 @@ us_map <- map_data("state") %>%
   mutate(region = gsub(" ", "-", region))
 
 # add salary info to the map
-map_salary_st_avg <- us_map %>%
-  left_join(salary_st_avg, by = join_by(region))
+map_salary_st_avg <- salary_st_avg %>%
+  mutate(region = tolower(region)) %>%
+  right_join(us_map, by = join_by(region))
 ```
 
 ## Column 1 {.sidebar}
@@ -152,8 +152,7 @@ Pay Progression
 # select salary info from states of interest
 salary <- salary_potential %>%
   select(state_name, early_career_pay, mid_career_pay) %>%
-  rename(state = state_name) %>%
-  mutate(state = tolower(state)) 
+  rename(state = state_name) 
 
 # break the data set down into groups defined by states
 by_state <- split(salary, salary$state)
