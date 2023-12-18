@@ -45,26 +45,39 @@ About
 
 In this dashboard, I will analyze a dataset about estimated career pay for college students in the US. The goal here is to address the following questions:
 
-* How does the early career pay differ across the U.S.? 
-* What is the relationship between early career pay and mid career pay? 
-* What is the relationship between early career pay and STEM percent of student body?
+1. How does the early career pay differ across the US? 
+2. What is the relationship between early career pay and mid career pay? 
+3. What is the relationship between career pay and STEM percent of student body?
 
-I obtained the original dataset from  [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10). I referred to this [data dictionary](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10#data-dictionary) from TidyTuesday.
+I obtained the original dataset from  [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10). 
 
-## Column 2 {data-width=600}
+<font size="2"> 
+Note: Testing about embeding Youtube video.
+</font>
 
-[insert Youtube tutorial]
+## Column 2 {data-width=500}
+
+<iframe 
+  width="560" 
+  height="315" 
+  src="https://www.youtube.com/embed/HVa42mJYppE?si=kjkmO9pwUlZ1LQtp" 
+  title="YouTube video player" 
+  frameborder="0" 
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+  allowfullscreen
+>
+</iframe>
 
 The Data
 =====================================
 
 ## Column 1 {.sidebar}
 
-Description of the Data
+This dashboard is built upon the *salary_potential.csv* dataset from TidyTuesday. It contains 935 observations and 7 variables. Each observation provides information about colleges across various US states. For a more detailed understanding of the variables, please refer to this [data dictionary](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10#salary_potentialcsv) from TidyTuesday.
 
 ## Column 2 {ata-width=650}
 
-### Table 1
+### Table 1: The Overall Salary Potential of Each College
 
 ```{r}
 salary_potential %>%
@@ -82,7 +95,7 @@ salary_st_avg <- salary_potential %>%
   mutate(region = tolower(region)) %>%
   group_by(region) %>%
   summarise(
-    avg_early_career_pay = mean(early_career_pay)
+    avg_early_career_pay = as.integer(mean(early_career_pay))
   )
   
 # find coordinates for us states
@@ -96,34 +109,34 @@ map_salary_st_avg <- us_map %>%
 
 ## Column 1 {.sidebar}
 
-Description of the Data
+*Table 2* provides summaries about the average early career pay for each state. It contains 50 observations and 2 variables. 
 
 ## Column 2 
 
-### Table 1
+### Table 2: The Average Early Career Pay of Each State
 
 ```{r}
 salary_st_avg %>%
   DT::datatable()
 ```
 
-Plot {data-navmenu="Pay by State"}
+Figure {data-navmenu="Pay by State"}
 =====================================
 
 ## Column 1 {.sidebar}
 
-Description of the Data
+*Figure 1* provides a map visualization of the average early career pay across the US. 48 states except Alaska and Hawaii are included in this map. 
 
 ## Column 2 
 
-### Chart 1
+### Figure 1: The Average Early Career Pay of Each State
 
 ```{r}
 # plot the average estimated early career pay across the US
 map_salary_st_avg %>% ggplot() +
   geom_polygon(aes(x = long, y = lat, group = group, fill = avg_early_career_pay)) +
   scale_fill_gradient(low = "#FAAB18", high = "#1380A1") +  # Adjust the color scale
-  labs(title = "The Average Estimated Early Career Salary Across the U.S.", subtitle = str_wrap("California, Texas, and the states in the northeastern region have higher estimated early career pay compared to states in the central portion of the U.S.", 60), caption = "Yuhan Xiao", fill = "Salary") +
+  labs(title = "The Average Estimated Early Career Pay Across the US", subtitle = str_wrap("California, Texas, and the states in the northeastern region have higher estimated early career pay compared to states in the central portion of the US", 60), caption = "Yuhan Xiao", fill = "Salary") +
   theme_void(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -131,8 +144,7 @@ map_salary_st_avg %>% ggplot() +
         text = element_text(family = "Times"))
 ```
 
-
-Trend
+Pay Progression
 =====================================
 
 ```{r}
@@ -152,25 +164,35 @@ mid_pay <- map_dbl(by_state, ~ mean(.x$mid_career_pay, na.rm=TRUE))
 # combine average pay into a table
 pay_trend <- tibble(
   state = names(early_pay),
-  avg_early_pay = early_pay,
-  avg_mid_pay = mid_pay
+  avg_early_pay = as.integer(early_pay),
+  avg_mid_pay = as.integer(mid_pay)
 )
 ```
 
 ## Column 1 {.sidebar}
 
-Description of the Data
+*Table 3* provides summaries about the average early and mid career pay for each state. It contains 50 observations and 3 variables. 
 
-## Column 2 
+*Figure 2* visualizes the association between the average early career pay and the average mid career pay. It presents a strong positive linear relationship between the two variables.
 
-### Chart 1
+## Column 2 {.tabset}
+
+### Table 3: The Average Estimated Early and Mid Career Pay for Each State
+
+```{r}
+pay_trend %>%
+  DT::datatable()
+```
+
+### Figure 2: The Association Between Average Estimated Early Career Pay and Mid Career Pay
 
 ```{r}
 # plot the association between average early career pay to average mid career pay
 pay_trend %>% 
-  ggplot() +
-  geom_point(aes(x = avg_early_pay, y = avg_mid_pay)) +
-  labs(title = str_wrap("The Association Between Average Estimated Early Career Salary and Mid Career Salary by State", 60), subtitle = str_wrap("A higher early career salary is associated with a higher mid career salary", 60), x = "average early career salary", y = "average mid career salary", caption = "Yuhan Xiao") +
+  ggplot(aes(x = avg_early_pay, y = avg_mid_pay)) +
+  geom_point(color = "#FAAB18") +
+  geom_smooth(color = "#1380A1") + 
+  labs(title = str_wrap("The Association Between Average Estimated Early Career Pay and Mid Career Pay", 55), subtitle = str_wrap("A higher early career salary is associated with a higher mid career salary", 60), x = "average early career salary (dollars)", y = "average mid career salary (dollars)", caption = "Yuhan Xiao") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -180,15 +202,13 @@ pay_trend %>%
         legend.position = "none")
 ```
 
-
 STEM - Early Pay
 =====================================
 
 ```{r}
 # select salary info from states of interest
 pay_stem_trend <- salary_potential %>%
-  rename(state = state_name) %>%
-  mutate(state = tolower(state)) 
+  rename(state = state_name)  
 
 state_choices <- pay_stem_trend %>%
   select(state) %>%
@@ -197,26 +217,30 @@ state_choices <- pay_stem_trend %>%
 
 ## Column 1 {.sidebar}
 
-Description of the Data
+*Figure 3* visualizes the association between the average early career pay and the percent of student body in STEM in the selected state. 
 
 ```{r}
-selectInput("state_choice", "Select a state:",
+selectInput("state_choice1", "Select a state:",
             state_choices)
 ```
 
 ## Column 2 
 
-### Chart 1
+### Figure 3: The Association Between Average Estimated Early Career Pay and Percent of STEM students
 
 ```{r warning = F, message = F, fig.dim = c(8,6)}
+titleText1 = reactive({
+  paste("The Association Between Average Estimated Early Career Pay and Percent of STEM students in ", input$state_choice1)
+})
+
 renderPlot({
   pay_stem_trend %>% 
-  filter(state == input$state_choice) %>%
+  filter(state == input$state_choice1) %>%
   ggplot(aes(x=stem_percent, y = as.integer(early_career_pay))) +
-  geom_point() +
-  geom_smooth() + 
+  geom_point(color = "#FAAB18") +
+  geom_smooth(color = "#1380A1") + 
   facet_wrap(~state, nrow = 2) +
-  labs(title = str_wrap("The Association Between Average Estimated Early Career Salary and Percent of STEM students by State", 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated early career salary", 60), x = "STEM percent", y = "average early career salary", caption = "Yuhan Xiao") +
+  labs(title = str_wrap(titleText1(), 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated early career salary", 60), x = "STEM percent", y = "average early career salary (dollars)", caption = "Yuhan Xiao") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -232,26 +256,30 @@ STEM - Mid Pay
 
 ## Column 1 {.sidebar}
 
-Description of the Data
+*Figure 4* visualizes the association between the average mid career pay and the percent of student body in STEM in the selected states. 
 
 ```{r}
-selectInput("state_choice", "Select a state:",
-            state_choices)
+selectInput("state_choice2", "Select a state:",
+            state_choices, selected = "California", multiple = TRUE)
 ```
+
+<font size="2"> 
+Note: Remove selected states using Backspace or Delete key on your keyboard. Select at least one state to generate a valid figure. 
+</font>
 
 ## Column 2 
 
-### Chart 1
+### Figure 4: The Association Between Average Estimated Mid Career Pay and Percent of STEM students
 
 ```{r warning = F, message = F, fig.dim = c(8,6)}
 renderPlot({
   pay_stem_trend %>% 
-  filter(state == input$state_choice) %>%
+  filter(state %in% input$state_choice2) %>%
   ggplot(aes(x=stem_percent, y = as.integer(mid_career_pay))) +
-  geom_point() +
-  geom_smooth() + 
-  facet_wrap(~state, nrow = 2) +
-  labs(title = str_wrap("The Association Between Average Estimated Mid Career Salary and Percent of STEM students by State", 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated mid career salary", 60), x = "STEM percent", y = "average mid career salary", caption = "Yuhan Xiao") +
+  geom_point(color = "#FAAB18") +
+  geom_smooth(color = "#1380A1") + 
+  facet_wrap(~state, ncol = 2) +
+  labs(title = str_wrap("The Association Between Average Estimated Mid Career Pay and Percent of STEM students", 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated mid career salary", 60), x = "STEM percent", y = "average mid career salary (dollars)", caption = "Yuhan Xiao") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -269,20 +297,22 @@ Analysis {style="position:relative;"}
 
 **Summary**
 
-Colleges have higher estimated early career salary for students if they are located in California, Texas, the northeastern region or if they have a higher percent of student body in STEM. A higher early career salary is associated with a higher mid career salary.
+Colleges have higher estimated early career salary for students if they are located in California, Texas, the northeastern region or if they have a higher percent of student body in STEM. A higher early career salary is linearly associated with a higher mid career salary.
 
-\* Chart 1 Note: 48 states and District of Columbia (D.C.) are included in this map. Alaska and Hawaii are not included in this map.
+<font size="2">
+*Figure 1* *: 48 states except Alaska and Hawaii are included in this map.
+</font>
 
 ## Column 2 {style="height:100pc;"}
 
-### Chart 1 *
+### Figure 1*: The Average Early Career Pay of Each State
 
 ```{r}
 # plot the average estimated early career pay across the US
 map_salary_st_avg %>% ggplot() +
   geom_polygon(aes(x = long, y = lat, group = group, fill = avg_early_career_pay)) +
   scale_fill_gradient(low = "#FAAB18", high = "#1380A1") +  # Adjust the color scale
-  labs(title = "The Average Estimated Early Career Salary Across the U.S.", subtitle = str_wrap("California, Texas, and the states in the northeastern region have higher estimated early career pay compared to states in the central portion of the U.S.", 60), caption = "Yuhan Xiao", fill = "Salary") +
+  labs(title = "The Average Estimated Early Career Pay Across the US", subtitle = str_wrap("California, Texas, and the states in the northeastern region have higher estimated early career pay compared to states in the central portion of the US", 60), caption = "Yuhan Xiao", fill = "Salary") +
   theme_void(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -290,14 +320,15 @@ map_salary_st_avg %>% ggplot() +
         text = element_text(family = "Times"))
 ```
 
-### Chart 2
+### Figure 2: The Association Between Average Estimated Early Career Pay and Mid Career Pay
 
 ```{r}
 # plot the association between average early career pay to average mid career pay
 pay_trend %>% 
-  ggplot() +
-  geom_point(aes(x = avg_early_pay, y = avg_mid_pay)) +
-  labs(title = str_wrap("The Association Between Average Estimated Early Career Salary and Mid Career Salary by State", 30), subtitle = str_wrap("A higher early career salary is associated with a higher mid career salary", 40), x = "average early career salary", y = "average mid career salary", caption = "Yuhan Xiao") +
+  ggplot(aes(x = avg_early_pay, y = avg_mid_pay)) +
+  geom_point(color = "#FAAB18") +
+  geom_smooth(color = "#1380A1") + 
+  labs(title = str_wrap("The Association Between Average Estimated Early Career Pay and Mid Career Pay", 55), subtitle = str_wrap("A higher early career salary is associated with a higher mid career salary", 60), x = "average early career salary (dollars)", y = "average mid career salary (dollars)", caption = "Yuhan Xiao") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -307,16 +338,16 @@ pay_trend %>%
         legend.position = "none")
 ```
 
-### Chart 3
+### Figure 5: The Association Between Average Estimated Early Career Pay and Percent of STEM students
 
 ```{r warning = F, message = F, fig.dim = c(8,6)}
 pay_stem_trend %>% 
-  filter(state %in% c("california", "michigan", "maryland", "washington")) %>%
+  filter(state %in% c("California", "Michigan", "Maryland", "Washington")) %>%
   ggplot(aes(x=stem_percent, y = early_career_pay, color = state)) +
   geom_point() +
   geom_smooth() + 
   facet_wrap(~state, nrow = 2) +
-  labs(title = str_wrap("The Association Between Average Estimated Early Career Salary and Percent of STEM students by State", 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated early career salary", 60), x = "STEM percent", y = "average early career salary", caption = "Yuhan Xiao") +
+  labs(title = str_wrap("The Association Between Average Estimated Early Career Salary and Percent of STEM students by State", 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated early career salary", 60), x = "STEM percent", y = "average early career salary (dollars)", caption = "Yuhan Xiao") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         plot.subtitle = element_text(hjust = 0.5),
@@ -325,4 +356,3 @@ pay_stem_trend %>%
         text = element_text(family = "Times"),
         legend.position = "none")
 ```
-
