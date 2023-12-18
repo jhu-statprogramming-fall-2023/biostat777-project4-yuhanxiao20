@@ -11,12 +11,13 @@ output:
 runtime: shiny
 ---
 
-```{r global}
+```{r global, message = F}
 library(here)
 library(flexdashboard)
 library(DT)
 library(tidyverse)
 library(maps)
+library(scales)
 
 # check if a directory named data exists locally
 if (!dir.exists(here("data"))) {
@@ -71,7 +72,9 @@ The Data
 
 ## Column 1 {.sidebar}
 
-This dashboard is built upon the *salary_potential.csv* dataset from TidyTuesday. It contains 935 observations and 7 variables. Each observation provides information about colleges across various US states. For a more detailed understanding of the variables, please refer to this [data dictionary](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10#salary_potentialcsv) from TidyTuesday.
+This dashboard is built upon the `salary_potential.csv` dataset from TidyTuesday. It contains 935 observations and 7 variables. Each observation provides information about colleges across various US states. 
+
+For a more detailed understanding of the variables, please refer to this [data dictionary](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10#salary_potentialcsv) from TidyTuesday.
 
 ## Column 2 {ata-width=650}
 
@@ -226,7 +229,7 @@ selectInput("state_choice1", "Select a state:",
 
 ### Figure 3: The Association Between Average Estimated Early Career Pay and Percent of STEM students
 
-```{r warning = F, message = F, fig.dim = c(8,6)}
+```{r}
 titleText1 = reactive({
   paste("The Association Between Average Estimated Early Career Pay and Percent of STEM students in ", input$state_choice1)
 })
@@ -269,7 +272,7 @@ Note: Remove selected states using Backspace or Delete key on your keyboard. Sel
 
 ### Figure 4: The Association Between Average Estimated Mid Career Pay and Percent of STEM students
 
-```{r warning = F, message = F, fig.dim = c(8,6)}
+```{r}
 renderPlot({
   pay_stem_trend %>% 
   filter(state %in% input$state_choice2) %>%
@@ -338,13 +341,14 @@ pay_trend %>%
 
 ### Figure 5: The Association Between Average Estimated Early Career Pay and Percent of STEM students
 
-```{r warning = F, message = F, fig.dim = c(8,6)}
+```{r}
 pay_stem_trend %>% 
   filter(state %in% c("California", "Michigan", "Maryland", "Washington")) %>%
-  ggplot(aes(x=stem_percent, y = early_career_pay, color = state)) +
+  ggplot(aes(x=stem_percent, y=as.integer(early_career_pay), color = state)) +
   geom_point() +
   geom_smooth() + 
   facet_wrap(~state, nrow = 2) +
+  scale_y_continuous(labels = label_number()) + 
   labs(title = str_wrap("The Association Between Average Estimated Early Career Salary and Percent of STEM students by State", 60), subtitle = str_wrap("A higher percent of student body in STEM is associated with a higher estimated early career salary", 60), x = "STEM percent", y = "average early career salary (dollars)", caption = "Yuhan Xiao") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
