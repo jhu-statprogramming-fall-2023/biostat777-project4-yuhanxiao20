@@ -51,22 +51,20 @@ In this dashboard, I will analyze a dataset about estimated career pay for colle
 
 I obtained the original dataset from  [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-10). 
 
-<font size="2"> 
-Note: Testing about embeding Youtube video.
-</font>
-
 ## Column 2 {data-width=500}
 
-<iframe 
-  width="560" 
-  height="315" 
-  src="https://www.youtube.com/embed/HVa42mJYppE?si=kjkmO9pwUlZ1LQtp" 
-  title="YouTube video player" 
-  frameborder="0" 
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-  allowfullscreen
->
-</iframe>
+[insert YoutTube video here]
+
+<!-- <iframe -->
+<!--   width="560" -->
+<!--   height="315" -->
+<!--   src="https://www.youtube.com/embed/HVa42mJYppE?si=kjkmO9pwUlZ1LQtp" -->
+<!--   title="YouTube video player" -->
+<!--   frameborder="0" -->
+<!--   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" -->
+<!--   allowfullscreen -->
+<!-- > -->
+<!-- </iframe> -->
 
 The Data
 =====================================
